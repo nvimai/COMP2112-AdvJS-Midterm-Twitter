@@ -1,26 +1,22 @@
-let people = [];
+const people = [];
 let currPerson = {};
-let addUserBtn = document.querySelector('#adduser');
-let goBackBtn = document.querySelector('#goback');
-let tweetBtn;
-let commentTextArea;
+const addUserBtn = document.querySelector('#adduser');
+const goBackBtn = document.querySelector('#goback');
+const main = document.querySelector('main');
 
 //1. Using the API(see above), fetch 3 twitter short - profiles such that upon refresh, a random set of three short - profiles is always fetched
 async function getPeople(number = 3) {
     res = await fetch(`https://randomuser.me/api/?results=${number}`);
     data = await res.json();
-    //people.push(...data.results);
     return data.results;
 }
 
 // 2. Display all the people using the short - profile HTML template
 displayAll();
 async function displayAll() {
-    people = await getPeople();
+    people.push(... await getPeople());
     renderList();
 }
-
-const main = document.querySelector('main');
 
 // Render list of people information
 function renderList() {
@@ -83,19 +79,21 @@ function gotoProfile(e) {
 // Render a person information
 function renderProfile(person) {
     // 6. Ensure long profile shows details such as email, cell, and location/state
+    let { picture, name, email, cell, location } = person;
+    let { street, city, state, postcode, country } = location;
     main.innerHTML = 
          `
             <article>
                 <div class="tc">
-                    <img src="${person.picture.large}" class="br-100 h3 w3 dib" title="" />
-                    <h1 class="f4">${person.name.first} ${person.name.last}</h1>
+                    <img src="${picture.large}" class="br-100 h3 w3 dib" title="" />
+                    <h1 class="f4">${name.first} ${name.last}</h1>
                     <hr class="mw3 bb bw1 b--black-10">
                 </div>
                 <div class="dtc v-mid pl3">
                     <p class="lh-copy measure center f6 black-70">
-                        ${person.email}<br>
-                        ${person.cell}<br>
-                        ${person.location.street.number} ${person.location.street.name}, ${person.location.city}, ${person.location.state} ${person.location.postcode}, ${person.location.country}
+                        ${email}<br>
+                        ${cell}<br>
+                        ${street.number} ${street.name}, ${city}, ${state} ${postcode}, ${country}
                     </p>
                 </div>
                 <div class="dtc v-mid pl6">
@@ -131,8 +129,7 @@ function renderProfile(person) {
 
 // 7. If user types something in the textarea boxes and clicks tweet, then display that tweet using the tweets HTML template
 function tweeting() {
-    let commentTextArea = document.querySelector('#comment');
-    let tweet = commentTextArea.value;
+    let tweet = document.querySelector('#comment').value;
     if (tweet != '') {
         if (currPerson.tweets == null) {
             currPerson.tweets = [];
