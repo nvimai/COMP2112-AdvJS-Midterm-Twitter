@@ -60,6 +60,9 @@ function mainClicked(e) {
     if (e.target.closest('article')) {
         gotoProfile(e.target.closest('article'));
     }
+    if (e.target.id == 'tweet') {
+        tweeting();
+    }
 }
 
 function gotoProfile(e) {
@@ -79,6 +82,7 @@ function gotoProfile(e) {
 
 // Render a person information
 function renderProfile(person) {
+    // 6. Ensure long profile shows details such as email, cell, and location/state
     main.innerHTML = 
          `
             <article>
@@ -107,27 +111,8 @@ function renderProfile(person) {
                     </div>
                 </form>
             </article>`;
-    tweetBtn = document.querySelector('#tweet');
-    tweetBtn.addEventListener('click', tweet);
-    commentTextArea = document.querySelector('#comment');
-    renderTweets(person);
-}
 
-// 7. If user types something in the textarea boxes and clicks tweet, then display that tweet using the tweets HTML template
-
-function tweet(e) {
-    e.preventDefault();
-    let tweet = commentTextArea.value;
-    if (tweet != '') {
-        if (currPerson.tweets == null) {
-            currPerson.tweets = [];
-        }
-        currPerson.tweets.push(tweet);
-        renderTweets(currPerson);
-    }
-}
-
-function renderTweets(person) {
+    //Display the tweets if exists of current person
     if (person.tweets) {
         let tweetsHtml = person.tweets.map(tweet => {
             return `
@@ -141,6 +126,19 @@ function renderTweets(person) {
             </div>
         `}).join('');
         main.innerHTML += tweetsHtml;
+    }
+}
+
+// 7. If user types something in the textarea boxes and clicks tweet, then display that tweet using the tweets HTML template
+function tweeting() {
+    let commentTextArea = document.querySelector('#comment');
+    let tweet = commentTextArea.value;
+    if (tweet != '') {
+        if (currPerson.tweets == null) {
+            currPerson.tweets = [];
+        }
+        currPerson.tweets.push(tweet);
+        renderProfile(currPerson);
     }
 }
 
